@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration - CampusConnect</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+
+  <div class="auth-card wide">
+    <div class="auth-header">
+      <a href="index.html" class="auth-logo">🎓</a>
+      <h2 class="auth-title">Student Registration</h2>
+      <p class="auth-subtitle">Create your CampusConnect student academic account</p>
+    </div>
+
+    <div class="auth-body">
+      <form id="register-form">
+        <div class="form-grid">
+          <!-- Full Name -->
+          <div class="form-group">
+            <label class="form-label" for="reg-fullname">Full Name *</label>
+            <input type="text" id="reg-fullname" class="form-control" placeholder="e.g. John Doe" required>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address *</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="john.doe@campusconnect.edu" required>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group">
+            <label class="form-label" for="reg-phone">Phone Number *</label>
+            <input type="tel" id="reg-phone" class="form-control" placeholder="+1 555-0199" required>
+          </div>
+
+          <!-- Student ID -->
+          <div class="form-group">
+            <label class="form-label" for="reg-studentid">Student ID / Roll No *</label>
+            <input type="text" id="reg-studentid" class="form-control" placeholder="e.g. STU2025001" required>
+          </div>
+
+          <!-- Department -->
+          <div class="form-group">
+            <label class="form-label" for="reg-dept">Department *</label>
+            <select id="reg-dept" class="form-control" required>
+              <option value="">Select Department...</option>
+            </select>
+          </div>
+
+          <!-- Course -->
+          <div class="form-group">
+            <label class="form-label" for="reg-course">Course *</label>
+            <input type="text" id="reg-course" class="form-control" placeholder="e.g. B.Tech Computer Science" required>
+          </div>
+
+          <!-- Year -->
+          <div class="form-group">
+            <label class="form-label" for="reg-year">Academic Year *</label>
+            <select id="reg-year" class="form-control" required>
+              <option value="1">1st Year (Semester 1 &amp; 2)</option>
+              <option value="2">2nd Year (Semester 3 &amp; 4)</option>
+              <option value="3" selected>3rd Year (Semester 5 &amp; 6)</option>
+              <option value="4">4th Year (Semester 7 &amp; 8)</option>
+            </select>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password *</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Minimum 6 characters" minlength="6" required>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label" for="reg-confirm-password">Confirm Password *</label>
+            <input type="password" id="reg-confirm-password" class="form-control" placeholder="Re-enter password" minlength="6" required>
+          </div>
+        </div>
+
+        <div id="password-match-error" style="color:var(--danger); font-size:13px; margin-bottom:16px; display:none;">
+          ⚠️ Passwords do not match. Please ensure both passwords are identical.
+        </div>
+
+        <button type="submit" id="reg-submit-btn" class="btn btn-primary" style="width:100%; padding:14px; font-size:15px;">
+          Register Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html"><strong>Sign in here</strong></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Load Departments on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      const deptSelect = document.getElementById('reg-dept');
+      try {
+        const response = await Api.get('/auth/departments');
+        const departments = response.data || [];
+        departments.forEach(dept => {
+          const opt = document.createElement('option');
+          opt.value = dept.id;
+          opt.textContent = `${dept.name} (${dept.code})`;
+          deptSelect.appendChild(opt);
+        });
+      } catch (err) {
+        showToast('Failed to load departments list', 'error');
+      }
+    });
+
+    // Handle form submit
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fullName = document.getElementById('reg-fullname').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phoneNumber = document.getElementById('reg-phone').value.trim();
+      const studentId = document.getElementById('reg-studentid').value.trim();
+      const departmentId = document.getElementById('reg-dept').value;
+      const course = document.getElementById('reg-course').value.trim();
+      const year = parseInt(document.getElementById('reg-year').value);
+      const password = document.getElementById('reg-password').value;
+      const confirmPassword = document.getElementById('reg-confirm-password').value;
+      const matchErr = document.getElementById('password-match-error');
+      const submitBtn = document.getElementById('reg-submit-btn');
+
+      if (password !== confirmPassword) {
+        matchErr.style.display = 'block';
+        return;
+      } else {
+        matchErr.style.display = 'none';
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registering Account...';
+
+      try {
+        const response = await Api.post('/auth/register', {
+          fullName,
+          email,
+          phoneNumber,
+          studentId,
+          departmentId: parseInt(departmentId),
+          course,
+          year,
+          password,
+          confirmPassword
+        });
+
+        showToast('Registration successful! Redirecting to login...', 'success', 3000);
+
+        setTimeout(() => {
+          window.location.href = 'login.html?registered=true';
+        }, 1500);
+
+      } catch (err) {
+        showToast(err.message || 'Registration failed. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register Account';
+      }
+    });
+  </script>
+</body>
+</html>

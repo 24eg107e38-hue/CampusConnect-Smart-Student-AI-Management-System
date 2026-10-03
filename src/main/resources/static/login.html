@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - CampusConnect</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <a href="index.html" class="auth-logo">🎓</a>
+      <h2 class="auth-title">Welcome Back</h2>
+      <p class="auth-subtitle">Sign in to your CampusConnect account</p>
+    </div>
+
+    <div class="auth-body">
+      <!-- Demo One-Click Fill -->
+      <div class="demo-credentials-box">
+        <div class="demo-title">
+          <span>⚡</span> Quick Demo Login (Click to Fill):
+        </div>
+        <div class="demo-btn-group">
+          <button type="button" class="demo-pill" onclick="fillCredentials('student')">👨‍🎓 Student</button>
+          <button type="button" class="demo-pill" onclick="fillCredentials('faculty')">👩‍🏫 Faculty</button>
+          <button type="button" class="demo-pill" onclick="fillCredentials('admin')">🏛️ Admin</button>
+        </div>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="name@campusconnect.edu" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+        </div>
+
+        <div class="form-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember-me">
+            <span>Remember me</span>
+          </label>
+          <a href="javascript:void(0)" onclick="openModal('forgot-password-modal')">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="login-btn" class="btn btn-primary" style="width:100%; padding:12px;">
+          Sign In
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account yet? <a href="register.html"><strong>Register as Student</strong></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgot-password-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Password Assistance</h3>
+        <button class="modal-close" onclick="closeModal('forgot-password-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px;">
+          For security in this institutional demo environment, predefined test account passwords are:
+        </p>
+        <ul style="font-size:13px; line-height:1.8; margin-left:20px; color:var(--text-main); margin-bottom:16px;">
+          <li><strong>Student:</strong> <code>Student@123</code></li>
+          <li><strong>Faculty:</strong> <code>Faculty@123</code></li>
+          <li><strong>Admin:</strong> <code>Admin@123</code></li>
+        </ul>
+        <p style="font-size:13px; color:var(--text-muted);">
+          Newly registered accounts use the custom password you specified during registration. If you need a manual credential reset, please contact the campus administrator.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('forgot-password-modal')">Understood</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Quick fill credentials helper
+    function fillCredentials(role) {
+      const emailInput = document.getElementById('login-email');
+      const passInput = document.getElementById('login-password');
+      if (role === 'student') {
+        emailInput.value = 'rahul.sharma@campusconnect.edu';
+        passInput.value = 'Student@123';
+      } else if (role === 'faculty') {
+        emailInput.value = 'faculty.cse@campusconnect.edu';
+        passInput.value = 'Faculty@123';
+      } else if (role === 'admin') {
+        emailInput.value = 'admin@campusconnect.edu';
+        passInput.value = 'Admin@123';
+      }
+      showToast(`Selected ${role.toUpperCase()} credentials`, 'info', 2000);
+    }
+
+    // Check URL query parameters for pre-selected role
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const role = urlParams.get('role');
+      if (role) {
+        fillCredentials(role);
+      }
+    });
+
+    // Handle Login submission
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const rememberMe = document.getElementById('remember-me').checked;
+      const loginBtn = document.getElementById('login-btn');
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Authenticating...';
+
+      try {
+        const response = await Api.post('/auth/login', {
+          email,
+          password,
+          rememberMe
+        });
+
+        const userData = response.data;
+        Auth.setSession(userData);
+
+        showToast('Login successful! Redirecting to your dashboard...', 'success', 2000);
+
+        setTimeout(() => {
+          if (userData.role === 'ROLE_STUDENT') {
+            window.location.href = 'student-dashboard.html';
+          } else if (userData.role === 'ROLE_FACULTY') {
+            window.location.href = 'faculty-dashboard.html';
+          } else if (userData.role === 'ROLE_ADMIN') {
+            window.location.href = 'admin-dashboard.html';
+          } else {
+            window.location.href = 'student-dashboard.html';
+          }
+        }, 800);
+
+      } catch (err) {
+        showToast(err.message || 'Login failed. Please check credentials.', 'error');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

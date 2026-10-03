@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal - CampusConnect</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/chart.min.js"></script>
+</head>
+<body>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon">🎓</div>
+        <div>
+          <div class="brand-title">CampusConnect</div>
+          <div class="brand-sub">Student Portal</div>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a class="sidebar-link active" onclick="switchTab('dashboard')">
+            <span class="sidebar-icon">📊</span> Dashboard
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('profile')">
+            <span class="sidebar-icon">👤</span> Profile
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('attendance')">
+            <span class="sidebar-icon">📅</span> Attendance
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('marks')">
+            <span class="sidebar-icon">📝</span> Marks &amp; Grades
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('assignments')">
+            <span class="sidebar-icon">📑</span> Assignments
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('leave')">
+            <span class="sidebar-icon">✉️</span> Leave Management
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('goals')">
+            <span class="sidebar-icon">🎯</span> Academic Goals
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('achievements')">
+            <span class="sidebar-icon">🏆</span> Achievements
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('notices')">
+            <span class="sidebar-icon">📢</span> Notices
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" onclick="switchTab('performance')">
+            <span class="sidebar-icon">💡</span> Smart Analyzer
+          </a>
+        </li>
+        <li class="sidebar-item" style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+          <a class="sidebar-link" onclick="Auth.logout()">
+            <span class="sidebar-icon">🚪</span> Logout
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div id="sidebar-user-avatar" class="avatar-circle">S</div>
+          <div style="min-width:0;">
+            <div id="sidebar-user-name" class="user-info-name">Student</div>
+            <div id="sidebar-user-role" class="user-info-role">ROLE_STUDENT</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Top Navbar -->
+      <nav class="top-navbar">
+        <div class="nav-left">
+          <button id="menu-toggle" class="menu-toggle-btn">☰</button>
+          <div class="page-headline" id="page-title">Student Dashboard</div>
+        </div>
+        <div class="nav-right">
+          <span class="role-badge student">Student Account</span>
+          <button class="btn btn-outline btn-sm" onclick="Auth.logout()">Sign Out</button>
+        </div>
+      </nav>
+
+      <!-- Content Body -->
+      <main class="content-body">
+
+        <!-- Smart Attendance Alert Banner (dynamically displayed if < 75%) -->
+        <div id="smart-attendance-alert" class="alert-banner warning" style="display:none;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:22px;">⚠️</span>
+            <div>
+              <strong>Attendance Alert:</strong> Your attendance is below 75%. Please improve your attendance immediately to remain eligible for examinations.
+            </div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="switchTab('attendance')">View Attendance Details</button>
+        </div>
+
+        <!-- ==================== 1. TAB: DASHBOARD ==================== -->
+        <section id="tab-dashboard" class="tab-content active">
+          <!-- Student Greeting & Info Bar -->
+          <div class="card" style="margin-bottom:20px; background:linear-gradient(135deg, #1e3a8a, #2563eb); color:white;">
+            <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+              <div>
+                <h2 style="color:white; font-size:22px; margin-bottom:4px;" id="dash-greeting">Welcome, Student</h2>
+                <p style="color:#bfdbfe; font-size:14px;" id="dash-student-meta">Roll No: STU2024001 | B.Tech Computer Science | Year 3</p>
+              </div>
+              <div>
+                <span id="dash-status-pill" class="badge" style="background:#fff; color:#1e3a8a; font-size:13px; padding:6px 14px;">
+                  Status: Active
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Metric Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-blue">📅</div>
+              <div class="stat-details">
+                <div class="stat-label">Attendance</div>
+                <div class="stat-value" id="card-attendance">--%</div>
+                <div class="stat-subtext" id="card-attendance-sub">Required: 75%</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-green">📝</div>
+              <div class="stat-details">
+                <div class="stat-label">Average Marks</div>
+                <div class="stat-value" id="card-marks">--%</div>
+                <div class="stat-subtext">Across registered subjects</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-purple">🎯</div>
+              <div class="stat-details">
+                <div class="stat-label">Current GPA</div>
+                <div class="stat-value" id="card-gpa">--</div>
+                <div class="stat-subtext">Scale of 10.0</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-amber">📑</div>
+              <div class="stat-details">
+                <div class="stat-label">Pending Assignments</div>
+                <div class="stat-value" id="card-assignments">--</div>
+                <div class="stat-subtext" id="card-assignments-sub">Coursework tracking</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-rose">✉️</div>
+              <div class="stat-details">
+                <div class="stat-label">Latest Leave Status</div>
+                <div class="stat-value" style="font-size:18px;" id="card-leave">--</div>
+                <div class="stat-subtext">Department review</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="charts-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span>📊</span> Subject-Wise Marks &amp; Attendance</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="student-overview-chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span>💡</span> Smart Performance Summary</div>
+                <a href="javascript:void(0)" onclick="switchTab('performance')" style="font-size:13px;">Detailed Analysis &rarr;</a>
+              </div>
+              <div class="card-body">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                  <span style="font-weight:600;">Overall Status:</span>
+                  <span id="dash-perf-badge" class="badge badge-primary">Evaluating...</span>
+                </div>
+                <div style="margin-bottom:16px;">
+                  <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                    <span>Overall Academic Index:</span>
+                    <strong id="dash-perf-score">0 / 100</strong>
+                  </div>
+                  <div class="progress-bar-bg">
+                    <div id="dash-perf-bar" class="progress-bar-fill primary" style="width:0%;"></div>
+                  </div>
+                </div>
+                <div style="font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text-main);">Top Recommendation:</div>
+                <div id="dash-top-rec" style="font-size:13px; color:var(--text-muted); background:#f8fafc; padding:10px 14px; border-radius:var(--radius-md); border-left:4px solid var(--secondary);">
+                  Loading recommendations...
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Notices on Dashboard -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📢</span> Recent Personalized Notices</div>
+              <a href="javascript:void(0)" onclick="switchTab('notices')" style="font-size:13px;">View All Notices &rarr;</a>
+            </div>
+            <div class="card-body">
+              <div id="dash-notices-container" class="table-responsive">
+                <p style="color:var(--text-muted);">Loading notices...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 2. TAB: PROFILE ==================== -->
+        <section id="tab-profile" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>👤</span> Student Profile Details</div>
+            </div>
+            <div class="card-body">
+              <div style="display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start;">
+                <!-- Photo Column -->
+                <div style="text-align:center; min-width:180px;">
+                  <div style="width:120px; height:120px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:48px; margin:0 auto 16px auto; border:4px solid #fff; box-shadow:var(--shadow-md);" id="profile-avatar-display">
+                    👨‍🎓
+                  </div>
+                  <h3 id="prof-display-name">Student Name</h3>
+                  <p id="prof-display-id" style="color:var(--text-muted); font-size:13px;">STU2024001</p>
+                </div>
+
+                <!-- Profile Edit Form -->
+                <div style="flex:1; min-width:280px;">
+                  <form id="profile-edit-form">
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="prof-name" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Student ID (Roll No)</label>
+                        <input type="text" id="prof-id" class="form-control" disabled style="background:#f1f5f9;">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="prof-email" class="form-control" disabled style="background:#f1f5f9;">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Phone Number *</label>
+                        <input type="tel" id="prof-phone" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <input type="text" id="prof-dept" class="form-control" disabled style="background:#f1f5f9;">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Course</label>
+                        <input type="text" id="prof-course" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Academic Year</label>
+                        <input type="text" id="prof-year" class="form-control" disabled style="background:#f1f5f9;">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Date of Joining</label>
+                        <input type="text" id="prof-doj" class="form-control" disabled style="background:#f1f5f9;">
+                      </div>
+                      <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Residential Address</label>
+                        <input type="text" id="prof-address" class="form-control" placeholder="Enter residential address">
+                      </div>
+                    </div>
+                    <button type="submit" id="save-profile-btn" class="btn btn-primary" style="margin-top:10px;">
+                      Save Profile Changes
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 3. TAB: ATTENDANCE ==================== -->
+        <section id="tab-attendance" class="tab-content">
+          <!-- Attendance Overview Card -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-blue">📊</div>
+              <div class="stat-details">
+                <div class="stat-label">Overall Attendance</div>
+                <div class="stat-value" id="att-overall-pct">--%</div>
+                <div class="stat-subtext" id="att-threshold-status">Minimum 75% required</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-green">✅</div>
+              <div class="stat-details">
+                <div class="stat-label">Present Days</div>
+                <div class="stat-value" id="att-present-days">--</div>
+                <div class="stat-subtext">Classes attended</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-rose">❌</div>
+              <div class="stat-details">
+                <div class="stat-label">Absent Days</div>
+                <div class="stat-value" id="att-absent-days">--</div>
+                <div class="stat-subtext">Classes missed</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrapper stat-icon-purple">📚</div>
+              <div class="stat-details">
+                <div class="stat-label">Total Working Days</div>
+                <div class="stat-value" id="att-total-days">--</div>
+                <div class="stat-subtext">Recorded class sessions</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subject-wise table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📅</span> Subject-Wise Attendance Breakdown</div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Total Sessions</th>
+                      <th>Attended</th>
+                      <th>Absent</th>
+                      <th>Attendance %</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-attendance-table-body">
+                    <tr><td colspan="7" style="text-align:center;">Loading attendance records...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 4. TAB: MARKS & GRADES ==================== -->
+        <section id="tab-marks" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📝</span> Academic Marks &amp; Semester Evaluation</div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Internal (/20)</th>
+                      <th>Assignment (/10)</th>
+                      <th>Mid Exam (/30)</th>
+                      <th>Final Exam (/40)</th>
+                      <th>Total (/100)</th>
+                      <th>Percentage</th>
+                      <th>Grade</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-marks-table-body">
+                    <tr><td colspan="9" style="text-align:center;">Loading marks...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual Marks Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📈</span> Marks Performance Analysis by Subject</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" style="height:320px;">
+                <canvas id="student-marks-bar-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 5. TAB: ASSIGNMENTS ==================== -->
+        <section id="tab-assignments" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📑</span> Coursework &amp; Assignments</div>
+              <div>
+                <select id="assignment-filter" class="form-control" style="width:auto; display:inline-block;" onchange="renderAssignmentsList()">
+                  <option value="ALL">All Assignments</option>
+                  <option value="PENDING">Pending Only</option>
+                  <option value="SUBMITTED">Submitted / Graded</option>
+                  <option value="OVERDUE">Overdue Only</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="assignments-container">
+                <p style="color:var(--text-muted);">Loading assignments...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 6. TAB: LEAVE MANAGEMENT ==================== -->
+        <section id="tab-leave" class="tab-content">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:18px;">Student Leave Applications</h2>
+            <button class="btn btn-primary" onclick="openModal('apply-leave-modal')">
+              <span>➕</span> Apply For Leave
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>✉️</span> My Leave Requests History</div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Leave Type</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Reason</th>
+                      <th>Applied On</th>
+                      <th>Status</th>
+                      <th>Faculty Review / Comments</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-leave-table-body">
+                    <tr><td colspan="7" style="text-align:center;">Loading leave requests...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 7. TAB: GOALS TRACKER ==================== -->
+        <section id="tab-goals" class="tab-content">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:18px;">Academic Goals Tracker</h2>
+            <button class="btn btn-primary" onclick="openModal('add-goal-modal')">
+              <span>🎯</span> Set New Academic Goal
+            </button>
+          </div>
+
+          <div id="goals-container" class="stats-grid">
+            <!-- Goal cards injected dynamically -->
+          </div>
+        </section>
+
+        <!-- ==================== 8. TAB: ACHIEVEMENTS ==================== -->
+        <section id="tab-achievements" class="tab-content">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:18px;">Achievements &amp; Extracurriculars</h2>
+            <button class="btn btn-primary" onclick="openModal('add-achievement-modal')">
+              <span>🏆</span> Add Achievement
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📜</span> Verified &amp; Pending Achievements</div>
+            </div>
+            <div class="card-body">
+              <div id="achievements-container" class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Category</th>
+                      <th>Title</th>
+                      <th>Description</th>
+                      <th>Date</th>
+                      <th>Verification Status</th>
+                      <th>Proof / URL</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-achievements-table-body">
+                    <tr><td colspan="6" style="text-align:center;">Loading achievements...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 9. TAB: NOTICES ==================== -->
+        <section id="tab-notices" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📢</span> Personalized Campus Notice Board</div>
+            </div>
+            <div class="card-body">
+              <div id="notices-list-container">
+                <p style="color:var(--text-muted);">Loading notices...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 10. TAB: PERFORMANCE ANALYZER ==================== -->
+        <section id="tab-performance" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>💡</span> Smart Student Performance Analyzer</div>
+              <span id="analyzer-overall-badge" class="badge badge-primary" style="font-size:14px; padding:6px 14px;">Evaluating...</span>
+            </div>
+            <div class="card-body">
+              <div class="stats-grid" style="margin-bottom:20px;">
+                <div class="stat-card">
+                  <div class="stat-icon-wrapper stat-icon-blue">📅</div>
+                  <div class="stat-details">
+                    <div class="stat-label">Attendance Score (25%)</div>
+                    <div class="stat-value" id="analyzer-att">--%</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon-wrapper stat-icon-green">📝</div>
+                  <div class="stat-details">
+                    <div class="stat-label">Academic Marks (50%)</div>
+                    <div class="stat-value" id="analyzer-marks">--%</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon-wrapper stat-icon-purple">📑</div>
+                  <div class="stat-details">
+                    <div class="stat-label">Assignment Completion (25%)</div>
+                    <div class="stat-value" id="analyzer-assign">--%</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon-wrapper stat-icon-amber">🏆</div>
+                  <div class="stat-details">
+                    <div class="stat-label">Composite Index</div>
+                    <div class="stat-value" id="analyzer-composite">-- / 100</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rule-Based Recommendations Box -->
+              <div style="margin-bottom:24px;">
+                <h3 style="font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                  <span>🎯</span> Automated Rule-Based Recommendations
+                </h3>
+                <div id="analyzer-recommendations-list" style="display:flex; flex-direction:column; gap:10px;">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+
+              <!-- Strengths & Areas for Improvement -->
+              <div class="charts-grid" style="margin-bottom:0;">
+                <div class="card" style="margin-bottom:0; background:#f0fdf4; border-color:#bbf7d0;">
+                  <div class="card-header" style="background:transparent; border-bottom:1px solid #bbf7d0;">
+                    <div class="card-title" style="color:#166534;"><span>💪</span> Academic Strengths</div>
+                  </div>
+                  <div class="card-body">
+                    <ul id="analyzer-strengths-list" style="padding-left:20px; line-height:1.8; color:#14532d; font-size:14px;">
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="card" style="margin-bottom:0; background:#fff7ed; border-color:#fed7aa;">
+                  <div class="card-header" style="background:transparent; border-bottom:1px solid #fed7aa;">
+                    <div class="card-title" style="color:#9a3412;"><span>⚠️</span> Areas for Improvement</div>
+                  </div>
+                  <div class="card-body">
+                    <ul id="analyzer-improvements-list" style="padding-left:20px; line-height:1.8; color:#7c2d12; font-size:14px;">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Submit Assignment Modal -->
+  <div id="submit-assignment-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Submit Coursework Solution</h3>
+        <button class="modal-close" onclick="closeModal('submit-assignment-modal')">&times;</button>
+      </div>
+      <form id="submit-assignment-form">
+        <div class="modal-body">
+          <input type="hidden" id="sub-assignment-id">
+          <div class="form-group">
+            <label class="form-label">Assignment</label>
+            <input type="text" id="sub-assignment-title" class="form-control" disabled style="background:#f1f5f9;">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sub-assignment-text">Submission Link / Repository / Notes *</label>
+            <textarea id="sub-assignment-text" class="form-control" rows="4" placeholder="e.g. GitHub repo link, Google Drive link, or text answer..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('submit-assignment-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Coursework</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Apply Leave Modal -->
+  <div id="apply-leave-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Apply for Student Leave</h3>
+        <button class="modal-close" onclick="closeModal('apply-leave-modal')">&times;</button>
+      </div>
+      <form id="apply-leave-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="leave-type">Leave Type *</label>
+            <select id="leave-type" class="form-control" required>
+              <option value="Medical">Medical Leave</option>
+              <option value="Academic">Academic / Conference Leave</option>
+              <option value="Casual">Casual / Family Leave</option>
+              <option value="Emergency">Emergency</option>
+            </select>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="leave-start-date">Start Date *</label>
+              <input type="date" id="leave-start-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="leave-end-date">End Date *</label>
+              <input type="date" id="leave-end-date" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="leave-reason">Reason for Absence *</label>
+            <textarea id="leave-reason" class="form-control" rows="3" placeholder="Provide reason for leave..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('apply-leave-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Goal Modal -->
+  <div id="add-goal-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Academic Goal</h3>
+        <button class="modal-close" onclick="closeModal('add-goal-modal')">&times;</button>
+      </div>
+      <form id="add-goal-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="goal-title">Goal Title *</label>
+            <input type="text" id="goal-title" class="form-control" placeholder="e.g. Achieve Semester GPA of 8.5" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="goal-type">Goal Metric *</label>
+              <select id="goal-type" class="form-control" required>
+                <option value="GPA">GPA</option>
+                <option value="PERCENTAGE">Percentage</option>
+                <option value="ATTENDANCE">Attendance %</option>
+                <option value="ASSIGNMENTS">Assignment Completion %</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="goal-target">Target Value *</label>
+              <input type="number" step="0.1" id="goal-target" class="form-control" placeholder="e.g. 8.5 or 85" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="goal-current">Current Baseline</label>
+              <input type="number" step="0.1" id="goal-current" class="form-control" placeholder="e.g. 7.2">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="goal-date">Target Date</label>
+              <input type="date" id="goal-date" class="form-control">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('add-goal-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Goal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Achievement Modal -->
+  <div id="add-achievement-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Academic Achievement</h3>
+        <button class="modal-close" onclick="closeModal('add-achievement-modal')">&times;</button>
+      </div>
+      <form id="add-achievement-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="ach-category">Category *</label>
+            <select id="ach-category" class="form-control" required>
+              <option value="CERTIFICATION">Certification</option>
+              <option value="HACKATHON">Hackathon</option>
+              <option value="SPORTS">Sports</option>
+              <option value="PAPER_PRESENTATION">Paper Presentation</option>
+              <option value="WORKSHOP">Workshop</option>
+              <option value="COMPETITION">Competition</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ach-title">Title *</label>
+            <input type="text" id="ach-title" class="form-control" placeholder="e.g. AWS Certified Solutions Architect" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ach-date">Date Achieved *</label>
+            <input type="date" id="ach-date" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ach-desc">Description</label>
+            <textarea id="ach-desc" class="form-control" rows="3" placeholder="Brief details about the accomplishment..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ach-proof">Certificate / Proof Verification URL</label>
+            <input type="url" id="ach-proof" class="form-control" placeholder="https://verify.example.org/cert/123">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('add-achievement-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit For Verification</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/student-dashboard.js"></script>
+</body>
+</html>

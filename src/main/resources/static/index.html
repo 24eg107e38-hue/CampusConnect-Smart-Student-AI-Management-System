@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusConnect - Smart Student Management and Performance Analysis System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <!-- Landing Top Navbar -->
+  <header class="landing-navbar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="brand-icon">🎓</div>
+      <div>
+        <div class="brand-title" style="color:var(--text-main);">CampusConnect</div>
+        <div class="brand-sub" style="color:var(--secondary); font-weight:700;">Smart Campus System</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a href="login.html" class="btn btn-outline">Sign In</a>
+      <a href="register.html" class="btn btn-primary">Student Register</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="landing-hero">
+    <span class="hero-tag">🚀 Next-Gen Collegiate Management</span>
+    <h1 class="hero-title">
+      Smart Student Management &amp; <br>
+      <span class="hero-gradient">Intelligent Performance Analysis</span>
+    </h1>
+    <p class="hero-desc">
+      A comprehensive college management platform providing rule-based performance insights, automated attendance alerts, assignment workflow, achievement verification, academic goals, and personalized notices.
+    </p>
+    <div class="hero-actions">
+      <a href="login.html" class="btn btn-primary" style="padding:14px 28px; font-size:16px;">
+        Access Campus Portals &rarr;
+      </a>
+      <a href="register.html" class="btn btn-outline" style="padding:14px 28px; font-size:16px;">
+        New Student Registration
+      </a>
+    </div>
+  </section>
+
+  <!-- Role Portals Grid -->
+  <section class="landing-cards">
+    <!-- Student Card -->
+    <div class="portal-card">
+      <div class="portal-icon" style="background:#eff6ff; color:#2563eb;">👨‍🎓</div>
+      <h3 class="portal-title">Student Portal</h3>
+      <p class="portal-desc">
+        Track subject-wise attendance with smart 75% warning alerts, view calculated grades, submit assignments, apply for leaves, track academic goals, and get automated performance recommendations.
+      </p>
+      <a href="login.html?role=student" class="btn btn-outline" style="width:100%;">Student Sign In</a>
+    </div>
+
+    <!-- Faculty Card -->
+    <div class="portal-card">
+      <div class="portal-icon" style="background:#f5f3ff; color:#7c3aed;">👩‍🏫</div>
+      <h3 class="portal-title">Faculty Portal</h3>
+      <p class="portal-desc">
+        Record and update classroom attendance, enter internal &amp; exam marks with auto-grade computation, create assignments, grade student submissions, and review leave applications.
+      </p>
+      <a href="login.html?role=faculty" class="btn btn-outline" style="width:100%;">Faculty Sign In</a>
+    </div>
+
+    <!-- Admin Card -->
+    <div class="portal-card">
+      <div class="portal-icon" style="background:#ecfdf5; color:#059669;">🏛️</div>
+      <h3 class="portal-title">Admin Portal</h3>
+      <p class="portal-desc">
+        Manage departments, students, faculty, and user accounts. View institutional metrics, broadcast personalized campus notices, and verify student achievements.
+      </p>
+      <a href="login.html?role=admin" class="btn btn-outline" style="width:100%;">Administrator Sign In</a>
+    </div>
+  </section>
+
+  <!-- Features Highlight -->
+  <section class="landing-features">
+    <div class="section-head">
+      <h2>Advanced Academic Features</h2>
+      <p>Designed to go beyond basic CRUD by integrating intelligent analytics and college operational workflows.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-box">
+        <div style="font-size:28px;">🚨</div>
+        <h4>Smart Attendance Alerts</h4>
+        <p>Real-time tracking of subject and overall attendance with automatic warning banners whenever a student drops below the mandatory 75% threshold.</p>
+      </div>
+
+      <div class="feature-box">
+        <div style="font-size:28px;">📊</div>
+        <h4>Performance Analyzer</h4>
+        <p>Rule-based engine evaluating attendance, continuous internal assessments, and assignments to generate overall status and actionable study recommendations.</p>
+      </div>
+
+      <div class="feature-box">
+        <div style="font-size:28px;">📝</div>
+        <h4>Assignment Lifecycle</h4>
+        <p>Faculty create assignments with deadlines. Students see dynamic notices like "Due in 2 days" or "Overdue", submit work, and receive verified grades.</p>
+      </div>
+
+      <div class="feature-box">
+        <div style="font-size:28px;">🎯</div>
+        <h4>Academic Goal Tracker</h4>
+        <p>Students set quantitative targets for GPA, attendance, and coursework completion with interactive progress bars.</p>
+      </div>
+
+      <div class="feature-box">
+        <div style="font-size:28px;">🏆</div>
+        <h4>Achievement Module</h4>
+        <p>Log hackathons, certifications, sports, paper publications, and workshops with faculty/admin verification badges.</p>
+      </div>
+
+      <div class="feature-box">
+        <div style="font-size:28px;">📢</div>
+        <h4>Targeted Notice Board</h4>
+        <p>Personalized notice distribution tailored to specific departments, academic years, or broadcast to the entire campus.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:#0f172a; color:#94a3b8; padding:32px 24px; text-align:center; font-size:14px;">
+    <p><strong>CampusConnect</strong> &copy; 2026. Built with Java 21, Spring Boot, MySQL, and Modern Responsive Web Architecture.</p>
+  </footer>
+
+</body>
+</html>
