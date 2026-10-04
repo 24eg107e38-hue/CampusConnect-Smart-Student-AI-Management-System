@@ -10,10 +10,10 @@ import java.util.Base64;
 
 /**
  * Secure password hashing using PBKDF2 with HMAC-SHA256 and cryptographic random salt.
- * Ensures passwords are never stored in plain text and protects against timing attacks.
+ * Implements Spring Security's PasswordEncoder interface for seamless framework integration.
  */
 @Component
-public class PasswordEncoder {
+public class PasswordEncoder implements org.springframework.security.crypto.password.PasswordEncoder {
 
     private static final int ITERATIONS = 12000;
     private static final int KEY_LENGTH = 256;

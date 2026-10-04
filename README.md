@@ -1,100 +1,108 @@
 # CampusConnect – Smart Student Management and Performance Analysis System
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-6.4.1-green.svg)](https://spring.io/projects/spring-security)
+[![Spring AI](https://img.shields.io/badge/Spring%20AI-Ready-blue.svg)](https://spring.io/projects/spring-ai)
+[![React](https://img.shields.io/badge/React-18.3.1-61dafb.svg)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5.4-purple.svg)](https://vitejs.dev/)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-blue.svg)](https://www.mysql.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ed.svg)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-**CampusConnect** is an enterprise-grade, full-stack college management web application designed to modernize university administration and elevate student academic success. Going far beyond traditional CRUD databases, CampusConnect incorporates an intelligent **Rule-Based Student Performance Analyzer**, **Smart Attendance Risk Alerts**, deadline-aware **Assignment Management**, multi-stage **Leave Workflows**, and role-tailored dashboards powered by interactive **Chart.js** data visualizations.
+**CampusConnect** is an enterprise-grade, full-stack college management web application designed to modernize university administration and elevate student academic success. Going far beyond traditional CRUD databases, CampusConnect incorporates an intelligent **Spring AI Cognitive Engine**, **Rule-Based Performance Analysis**, **Smart Attendance Risk Alerts**, deadline-aware **Assignment Management**, multi-stage **Leave Workflows**, and dual-interface options: a modern **React 18 SPA** and a lightweight **Vanilla Web Frontend**.
 
 ---
 
-## 🏛️ System Architecture & Highlights
+## 🏛️ System Architecture
 
 ```
-                                 ┌─────────────────────────┐
-                                 │   Frontend Web Client   │
-                                 │  (HTML5 / CSS3 / ES6)   │
-                                 │ Responsive Dashboards   │
-                                 └────────────┬────────────┘
-                                              │ REST (JSON) / JWT Bearer
-                                              ▼
-                                 ┌─────────────────────────┐
-                                 │  Spring Web MVC Layer   │
-                                 │ Controllers & Validation│
-                                 └────────────┬────────────┘
-                                              │
-                      ┌───────────────────────┼───────────────────────┐
-                      ▼                       ▼                       ▼
-            ┌───────────────────┐   ┌───────────────────┐   ┌───────────────────┐
-            │ Performance Engine│   │ Attendance Alert  │   │ JWT Auth Security │
-            │ (Rule Analysis)   │   │ (<75% Threshold)  │   │ (PBKDF2 SHA-256)  │
-            └─────────┬─────────┘   └─────────┬─────────┘   └─────────┬─────────┘
-                      │                       │                       │
-                      └───────────────────────┼───────────────────────┘
-                                              ▼
-                                 ┌─────────────────────────┐
-                                 │ Spring Data JPA Services│
-                                 │  Business Logic Layer   │
-                                 └────────────┬────────────┘
-                                              │ Hibernate ORM
-                                              ▼
-                                 ┌─────────────────────────┐
-                                 │    MySQL Database       │
-                                 │    campusconnect_db     │
-                                 └─────────────────────────┘
+                               ┌──────────────────────────────────────────────────┐
+                               │               User Web Browsers                  │
+                               │  React 18 SPA (Port 3000) / Vanilla (Port 8080)   │
+                               └────────────────────────┬─────────────────────────┘
+                                                        │ HTTP / REST / JWT Bearer
+                                                        ▼
+                               ┌──────────────────────────────────────────────────┐
+                               │           Spring Security 6 Filter Chain         │
+                               │ CORS Filter · Stateless Session · Token Gate     │
+                               └────────────────────────┬─────────────────────────┘
+                                                        │
+                                                        ▼
+                               ┌──────────────────────────────────────────────────┐
+                               │              Spring Web REST Controllers         │
+                               │ Auth · Student · Faculty · Admin · AI Engine     │
+                               └───────────┬────────────┬────────────┬────────────┘
+                                           │            │            │
+            ┌──────────────────────────────┘            │            └──────────────────────────────┐
+            ▼                                           ▼                                           ▼
+┌───────────────────────┐                   ┌───────────────────────┐                   ┌───────────────────────┐
+│ Spring AI & Cognitive │                   │ Attendance & Academic │                   │ Performance Analyzer  │
+│  Assistant / Planner  │                   │ Alerts (<75% Warning) │                   │ (3-Factor Composite)  │
+└───────────┬───────────┘                   └───────────┬───────────┘                   └───────────┬───────────┘
+            │                                           │                                           │
+            └──────────────────────────────┬────────────┴───────────────────────────────────────────┘
+                                           │
+                                           ▼
+                               ┌──────────────────────────────────────────────────┐
+                               │          Spring Data JPA Service Layer           │
+                               │              Hibernate 6 ORM Layer               │
+                               └────────────────────────┬─────────────────────────┘
+                                                        │
+                                                        ▼
+                               ┌──────────────────────────────────────────────────┐
+                               │         MySQL 8.0+ Relational Database           │
+                               │        campusconnect_db (HikariCP Pool)          │
+                               └──────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🌟 Key Functional Modules
+## 🌟 Key Modules & AI Features
 
-### 1. 🎓 Student Portal (`student-dashboard.html`)
-* **Live Academic Dossier**: View comprehensive student profiles, roll numbers, department associations, and semester details.
-* **Smart Attendance Monitor & Alert Banner**: Immediate visual alert flagged whenever attendance drops below **75%**, calculating required makeup sessions.
-* **Interactive Marks & Semester Breakdown**: Track Internal assessments, Assignment scores, Midterms, Final Exam scores, percentage, and letter grades.
-* **Assignment Lifecycle**: Overview of assigned coursework, countdown badges (*"Due in 2 days"*, *"Overdue"*), submission interface with GitHub/Cloud link support, and faculty feedback.
-* **Leave Application Center**: Submit medical, academic, or personal leave requests with date pickers, reason, and track status (`PENDING`, `APPROVED`, `REJECTED`).
-* **Academic Goal Tracker**: Set Target CGPA and Semester Objectives with interactive visual completion progress bars.
-* **Achievements Showcase**: Log hackathon wins, research papers, and certifications with proof URLs awaiting faculty verification.
-* **Targeted Notice Board**: Filtered announcements delivered specifically to the student's department and academic year.
-* **Smart Performance Analyzer Tab**: Multi-metric index score with qualitative standing, strengths, improvement areas, and rule-based study suggestions.
+### 1. 🤖 AI Student Assistant (`AiAssistantWidget`)
+* **Context-Aware Dialogue**: The assistant dynamically queries the student's live records—including overall and subject-wise attendance %, exam marks, GPA, and pending assignment deadlines.
+* **Intelligent Guidance**: Delivers instant academic troubleshooting, exam preparation tips, timetable optimization, and campus protocol advice.
+* **Suggested Action Pills**: Quick prompts for attendance risk calculations, upcoming assignments, and performance summaries.
 
-### 2. 👩‍🏫 Faculty Portal (`faculty-dashboard.html`)
-* **Instructor Command Center**: Metrics overview covering total department students, average class attendance, students at risk (<75%), and pending reviews.
-* **Student Directory & Advanced Filter**: Search students by name, roll number, department, year, attendance ranges, and performance status.
-* **One-Click Performance Dossier**: Inspect any student's complete academic health profile via modal popup.
-* **Daily Classroom Attendance Marking**: Batch attendance logger with date selector, subject selector, and one-click "Mark All Present" toggle.
-* **Academic Marks Management**: Direct grade sheet entry for CS501, CS502, CS503 with auto-computed totals and letter grades.
-* **Assignment Creation & Submission Review**: Publish assignments with deadline tracking; review student submissions and record marks with feedback.
-* **Leave Approval Engine**: Review pending student leaves with approve/reject decisions and instructor remarks.
-* **Notice Publisher**: Post department-specific announcements.
+### 2. 📅 AI Study Plan Generator (`AiStudyPlanModal`)
+* **Cognitive Load Distribution**: Generates a tailored 7-day study timetable distributing user-selected daily study hours (1–8 hours) based on actual subject performance and attendance deficits.
+* **Subject Prioritization Matrix**: Identifies critical subjects with urgency ratings (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`) and recommended weekly hour allocations.
+* **Pomodoro Integration**: Breaks study sessions into focused 45-minute sprint blocks with 15-minute scheduled rest intervals.
 
-### 3. 🛡️ Administrator Portal (`admin-dashboard.html`)
-* **Institutional Executive Dashboard**: Real-time campus-wide metrics: Total Enrolled Students, Total Faculty Staff, Academic Departments, and Active User Accounts.
-* **Visual Institutional Analytics**:
-  * *Department Attendance Comparison* (Bar chart with threshold indicators)
-  * *Student Enrollment Distribution* (Doughnut chart by branch)
-* **Student Roster Management**: Institutional student search, full profile dossier inspection, and safe deletion.
-* **Faculty Staff Management**: Add new faculty members with automatic user account generation, designation assignment, and specialization indexing.
+### 3. 📊 AI Performance Explanation Engine (`AiPerformanceExplanationModal`)
+* **3-Factor Score Breakdown**: Deconstructs student performance according to university weighting:
+  $$\text{Composite Score} = (0.25 \times \text{Attendance \%}) + (0.50 \times \text{Exam Marks \%}) + (0.25 \times \text{Coursework \%})$$
+* **Factor Diagnostics**: Individual status flags, actual vs maximum contribution scores, and critical alerts (e.g., `<75%` attendance debarment warnings).
+* **Score Trajectory & Upside Projection**: Calculates maximum potential score achievable with a 30-day intervention.
+* **Actionable 30-Day Recovery Roadmap**: Step-by-step milestones (Day 1–7, Day 8–15, Day 16–22, Day 23–30) to improve academic standing.
+* **Dual-Mode Engine**: Operates natively using the built-in database heuristic cognitive engine without requiring external API keys, while also supporting external LLMs (OpenAI/Gemini) if `AI_API_KEY` is provided.
+
+### 4. 🎓 Comprehensive Student Portal (`StudentDashboard`)
+* **Profile & Dossier**: Complete enrollment details, roll numbers, department, and semester.
+* **Attendance Risk Alert**: Visual warning banner when attendance drops below 75%, calculating exact classes required to restore eligibility.
+* **Marks & Grade Ledger**: Breakdown of internal marks, midterms, assignments, totals, percentages, and letter grades.
+* **Coursework & Submissions**: View assignment briefs, countdown timers (*"Due in 2 days"*), submit GitHub/cloud links, and view grades/feedback.
+* **Leave Management**: Apply for medical, academic, or personal leave with date pickers; real-time status tracker (`PENDING`, `APPROVED`, `REJECTED`).
+* **Academic Goal Tracker**: Set Target CGPA and semester goals with visual progress bars.
+* **Achievements Showcase**: Submit verified hackathon awards, papers, and certifications with proof URLs.
+* **Personalized Notice Board**: Filtered announcements delivered to student branch and year.
+
+### 5. 👩‍🏫 Faculty Command Center (`FacultyDashboard`)
+* **Departmental Health Metrics**: Total department students, class attendance averages, students at risk (<75%), and pending reviews.
+* **Student Directory & Search**: Real-time multi-parameter search by name, roll number, department, year, attendance, and status.
+* **Batch Attendance Logger**: Date selector, subject picker, and one-click "Mark All Present" toggle.
+* **Marks & Grade Entry**: Direct grade sheet entry with automatic grade computation.
+* **Assignment Management**: Publish assignments and review/grade student submissions.
+* **Leave Review**: One-click approvals and rejections with instructor remarks.
+
+### 6. 🛡️ Administrator Command Center (`AdminDashboard`)
+* **Institutional Executive Dashboard**: Real-time metrics across campus: Enrolled Students, Faculty Roster, Departments, and User Accounts.
+* **Faculty Roster Management**: Add new faculty members with automatic credentials generation and designation assignment.
 * **Department Management**: Add and modify academic branches (CSE, ECE, AI&DS, MECH, IT).
-* **Campus-Wide Broadcast Notice Board**: Issue institutional directives with priority badges (`URGENT`, `HIGH`, `NORMAL`).
-* **User Security & Access Control**: View all registered credentials across roles with 1-click **Enable / Disable** account toggles.
-* **Critical Attendance Warning Report**: Scans all students campus-wide and flags those below 75% for intervention.
-
----
-
-## 🧠 Smart Performance Analyzer Algorithm
-
-The **PerformanceService** evaluates each student through an automated composite scoring algorithm:
-
-$$\text{Performance Score} = (0.25 \times \text{Attendance \%}) + (0.50 \times \text{Academic Marks \%}) + (0.25 \times \text{Assignment Completion \%})$$
-
-### Qualitative Performance Categories:
-* **Excellent (90% – 100%)**: Eligible for advanced honors electives and merit scholarship programs.
-* **Good (75% – 89.9%)**: Solid academic foundation; recommendations focus on competitive projects and publications.
-* **Average (60% – 74.9%)**: Passing standard; guided towards peer study groups and faculty office hours.
-* **Needs Improvement (< 60%)**: Triggers automated academic warnings, mandatory tutoring, and intervention sessions.
+* **Campus-Wide Broadcast Notice Board**: Issue announcements with priority badges (`URGENT`, `HIGH`, `NORMAL`).
+* **User Security Control**: Enable / Disable user accounts with one click.
+* **Campus Attendance Audit**: Instant view of all students below 75% attendance across all departments.
 
 ---
 
@@ -103,14 +111,15 @@ $$\text{Performance Score} = (0.25 \times \text{Attendance \%}) + (0.50 \times \
 | Layer | Technologies |
 | :--- | :--- |
 | **Backend Framework** | Spring Boot 4.1.1, Spring Web MVC, Spring Data JPA |
+| **Security Layer** | Spring Security 6.4.1, Stateless Session, RFC 7519 JWT, PBKDF2 HMAC-SHA256 |
+| **AI & Cognitive Engine** | Spring AI Architecture, Heuristic Academic Reasoner, Optional LLM Integration |
 | **Language & Runtime** | Java 21 LTS |
 | **Persistence / ORM** | Hibernate 6.x, MySQL Connector/J |
-| **Database** | MySQL 8.0+ / 9.0+ |
-| **Security & Auth** | PBKDF2 with HMAC-SHA256 (12,000 iterations), RFC 7519 standard JWT |
-| **Input Validation** | Jakarta Validation API (`jakarta.validation-api:3.1.1`), Hibernate Validator |
-| **Frontend UI** | HTML5, CSS3 (Modern custom design system, Flexbox, CSS Grid), Vanilla ES6 JavaScript |
-| **Data Visualization** | Chart.js 4.4 |
-| **Build & Tooling** | Apache Maven 3.9+ |
+| **Database** | MySQL 8.0+ / 9.0+ with HikariCP Connection Pool |
+| **Modern React Frontend** | React 18.3, Vite 5.4, Lucide Icons, Custom Design System |
+| **Vanilla Web Frontend** | HTML5, CSS3 (Custom Responsive System), ES6 JavaScript, Chart.js 4.4 |
+| **Containerization** | Docker, Docker Compose, Nginx Alpine, Eclipse Temurin 21 JRE |
+| **Build & Tooling** | Apache Maven 3.9+, Node.js 20+ / 24+, npm 10+ |
 
 ---
 
@@ -118,21 +127,29 @@ $$\text{Performance Score} = (0.25 \times \text{Attendance \%}) + (0.50 \times \
 
 All protected endpoints require an `Authorization: Bearer <token>` header obtained from `/api/auth/login`.
 
-### Authentication & Public (`/api/auth`)
+### 1. Spring AI Cognitive Services (`/api/ai`)
+| Method | Endpoint | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/ai/assistant/chat` | Context-aware AI Student Assistant chat dialogue | Student |
+| `POST` | `/api/ai/study-plan` | Generate personalized 7-day Pomodoro study timetable | Student |
+| `GET` | `/api/ai/performance-explanation/my` | AI Performance analysis & 30-day recovery roadmap for logged-in student | Student |
+| `GET` | `/api/ai/performance-explanation/student/{id}` | AI Performance analysis for specific student | Faculty / Admin |
+
+### 2. Authentication & Public (`/api/auth`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/auth/register` | Register a new student account | Public |
 | `POST` | `/api/auth/login` | Authenticate user and issue JWT token | Public |
 | `GET` | `/api/auth/departments` | Get available departments for registration | Public |
 
-### Dashboard Metrics (`/api/dashboard`)
+### 3. Dashboard Metrics (`/api/dashboard`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/dashboard/student/{id}` | Complete metrics, alerts, notices, and goals for student | Student / Faculty / Admin |
 | `GET` | `/api/dashboard/faculty` | Department aggregate stats, pending leaves & submissions | Faculty / Admin |
 | `GET` | `/api/dashboard/admin` | Campus-wide counts, department attendance & distribution | Admin |
 
-### Student Directory & Profile (`/api/students`)
+### 4. Student Directory & Profiles (`/api/students`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/students` | Search students (by query, dept, year, attendance, status) | Faculty / Admin |
@@ -141,25 +158,20 @@ All protected endpoints require an `Authorization: Bearer <token>` header obtain
 | `PUT` | `/api/students/{id}` | Update student profile information | Student / Admin |
 | `DELETE` | `/api/students/{id}` | Remove student and associated records | Admin |
 
-### Performance Analyzer (`/api/performance`)
-| Method | Endpoint | Description | Access |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/performance/student/{studentId}` | Calculate composite score, status, strengths, & advice | Authenticated |
-
-### Attendance Management (`/api/attendance`)
+### 5. Attendance Management (`/api/attendance`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/attendance/student/{id}/overview` | Overall percentage, present count, & <75% alert status | Authenticated |
 | `GET` | `/api/attendance/student/{id}/subject-wise`| Subject-by-subject attendance percentages | Authenticated |
 | `POST` | `/api/attendance/batch` | Record classroom attendance for multiple students | Faculty / Admin |
 
-### Marks Management (`/api/marks`)
+### 6. Marks Management (`/api/marks`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/marks/student/{studentId}` | Get all semester exam marks for a student | Authenticated |
 | `POST` | `/api/marks` | Record or update marks with automatic grade computation | Faculty / Admin |
 
-### Assignments & Submissions (`/api/assignments`)
+### 7. Assignments & Submissions (`/api/assignments`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/assignments` | List all assignments with remaining days / overdue tag | Authenticated |
@@ -168,7 +180,7 @@ All protected endpoints require an `Authorization: Bearer <token>` header obtain
 | `GET` | `/api/assignments/{id}/submissions` | View student submissions for an assignment | Faculty / Admin |
 | `PUT` | `/api/assignments/submissions/{id}/grade` | Grade submission and leave instructor feedback | Faculty / Admin |
 
-### Leave Management (`/api/leaves`)
+### 8. Leave Management (`/api/leaves`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/leaves/student/{studentId}` | View leave application history | Student / Faculty / Admin |
@@ -176,7 +188,7 @@ All protected endpoints require an `Authorization: Bearer <token>` header obtain
 | `POST` | `/api/leaves` | Apply for academic/medical leave | Student |
 | `PUT` | `/api/leaves/{id}/review` | Review leave request (`APPROVED` / `REJECTED`) | Faculty / Admin |
 
-### Goals & Achievements (`/api/goals`, `/api/achievements`)
+### 9. Goals & Achievements (`/api/goals`, `/api/achievements`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/goals/student/{studentId}` | Fetch student goals and target percentages | Authenticated |
@@ -186,7 +198,7 @@ All protected endpoints require an `Authorization: Bearer <token>` header obtain
 | `POST` | `/api/achievements` | Add co-curricular accomplishment with proof URL | Student |
 | `PUT` | `/api/achievements/{id}/verify` | Verify student achievement | Faculty / Admin |
 
-### Notices & Broadcasts (`/api/notices`)
+### 10. Notices & Broadcasts (`/api/notices`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/notices` | Get all campus notices | Authenticated |
@@ -194,7 +206,7 @@ All protected endpoints require an `Authorization: Bearer <token>` header obtain
 | `POST` | `/api/notices` | Publish targeted or campus-wide notice | Faculty / Admin |
 | `DELETE` | `/api/notices/{id}` | Delete announcement | Admin |
 
-### Administration & Security (`/api/admin`, `/api/faculty`, `/api/departments`)
+### 11. Administration & Security (`/api/admin`, `/api/faculty`, `/api/departments`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/admin/users` | List all system user credentials and statuses | Admin |
@@ -215,20 +227,21 @@ The database is pre-seeded with realistic demonstration data, including courses,
 
 | Role | Email Address | Password | Profile Highlights |
 | :--- | :--- | :--- | :--- |
-| **Student (At-Risk)** | `rahul.sharma@campusconnect.edu` | `Student@123` | B.Tech CSE (Year 3), **64% Attendance** (Triggers Alert banner & intervention advice) |
+| **Student (At-Risk)** | `rahul.sharma@campusconnect.edu` | `Student@123` | B.Tech CSE (Year 3), **64% Attendance** (Triggers Alert banner, AI Assistant study plans & 30-day recovery roadmap) |
 | **Student (High Honor)** | `priya.patel@campusconnect.edu` | `Student@123` | B.Tech CSE (Year 3), **92% Attendance**, High GPA, Verified Achievements |
 | **Faculty Member** | `faculty.cse@campusconnect.edu` | `Faculty@123` | Dr. Robert Vance, Professor & HoD Computer Science |
 | **System Admin** | `admin@campusconnect.edu` | `Admin@123` | Campus Administrator, full system command center access |
 
-> 💡 **Quick Login**: The login screen (`login.html`) includes 1-click **Demo Login** buttons to automatically fill credentials for any role!
+> 💡 **Quick Login**: Both the React login page and vanilla login screen feature 1-click **Demo Login** buttons to automatically authenticate as any role!
 
 ---
 
-## 🚀 Setup & Installation Guide
+## 🚀 Running the Project Locally
 
 ### Prerequisites
-* **Java Development Kit (JDK)**: Version 21 LTS installed and on `PATH`
-* **Apache Maven**: Version 3.9+ installed and on `PATH`
+* **Java Development Kit (JDK)**: Version 21 LTS
+* **Apache Maven**: Version 3.9+
+* **Node.js**: Version 20+ or 24+ with npm
 * **MySQL Server**: Version 8.0 or higher running on port `3306`
 
 ### 1. Database Setup
@@ -245,25 +258,72 @@ spring.datasource.username=root
 spring.datasource.password=root
 ```
 
-### 3. Build & Run Application
-From the project root directory, run:
+### 3. Start the Spring Boot Backend
+From the root directory:
 ```bash
-mvn spring-boot:run -o
+mvn spring-boot:run
 ```
-*(Use the `-o` offline flag if working in an isolated environment with pre-cached dependencies).*
+*(Or use `mvn spring-boot:run -o` if running offline with pre-cached dependencies).*
 
-When the application boots:
-* Hibernate will automatically create all tables.
-* `DataInitializer` will automatically seed the initial departments, subjects, faculty, students, attendance, marks, and notices.
+When the backend boots:
+* Hibernate automatically creates all relational tables.
+* `DataInitializer` seeds departments, courses, faculty, students, attendance, and assignments.
+* Spring Security secures all endpoints with JWT bearer authentication.
 
-### 4. Access the Application
-Open your web browser and navigate to:
-* **Landing Page**: [http://localhost:8080/](http://localhost:8080/)
-* **Sign In Portal**: [http://localhost:8080/login.html](http://localhost:8080/login.html)
-* **Student Registration**: [http://localhost:8080/register.html](http://localhost:8080/register.html)
-* **Student Dashboard**: [http://localhost:8080/student-dashboard.html](http://localhost:8080/student-dashboard.html)
-* **Faculty Dashboard**: [http://localhost:8080/faculty-dashboard.html](http://localhost:8080/faculty-dashboard.html)
-* **Admin Command Center**: [http://localhost:8080/admin-dashboard.html](http://localhost:8080/admin-dashboard.html)
+### 4. Start the Modern React Frontend
+Open a second terminal in the `frontend` folder:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+The React SPA will launch at: **http://localhost:3000/** (proxying API calls to backend port `8080`).
+
+To build the React production bundle:
+```bash
+npm run build
+```
+
+### 5. Accessing Both Frontends
+* **React 18 SPA (Primary Modern UI)**: [http://localhost:3000/](http://localhost:3000/)
+* **Vanilla Static Frontend**: [http://localhost:8080/](http://localhost:8080/)
+  * Sign In Portal: [http://localhost:8080/login.html](http://localhost:8080/login.html)
+  * Student Registration: [http://localhost:8080/register.html](http://localhost:8080/register.html)
+  * Student Dashboard: [http://localhost:8080/student-dashboard.html](http://localhost:8080/student-dashboard.html)
+  * Faculty Dashboard: [http://localhost:8080/faculty-dashboard.html](http://localhost:8080/faculty-dashboard.html)
+  * Admin Dashboard: [http://localhost:8080/admin-dashboard.html](http://localhost:8080/admin-dashboard.html)
+
+---
+
+## 🐳 Production Deployment with Docker
+
+CampusConnect is fully containerized and production-ready with Docker and Docker Compose.
+
+### 1. Architecture
+* **`mysql`**: Official MySQL 8.0 image with healthchecks and persistent storage volume (`mysql_data`).
+* **`backend`**: Multi-stage Dockerfile compiling Java 21 Spring Boot JAR using Maven and running on lightweight `eclipse-temurin:21-jre-alpine` with HikariCP connection pooling and production tuning (`application-prod.properties`).
+* **`frontend`**: Multi-stage Dockerfile building the React 18 SPA with Vite and serving via `nginx:alpine`, with automatic reverse proxy routing for `/api/`.
+
+### 2. Deploy with Docker Compose
+To launch the complete full-stack environment with a single command:
+```bash
+docker-compose up --build -d
+```
+
+### 3. Verify Containers
+```bash
+docker-compose ps
+```
+
+### 4. Production URLs
+* **React Full-Stack Application**: [http://localhost:3000/](http://localhost:3000/)
+* **Backend REST API**: [http://localhost:8080/api](http://localhost:8080/api)
+* **MySQL Database**: `localhost:3306`
+
+To shut down the deployment:
+```bash
+docker-compose down
+```
 
 ---
 
@@ -272,21 +332,52 @@ Open your web browser and navigate to:
 ```
 student-management/
 ├── pom.xml                                     # Maven project build descriptor
-├── README.md                                   # Complete system documentation
+├── Dockerfile                                  # Multi-stage Spring Boot 3 + Java 21 Dockerfile
+├── docker-compose.yml                          # Full-stack orchestrator (MySQL, Backend, Frontend)
+├── README.md                                   # Comprehensive project documentation
+├── frontend/                                   # React 18 SPA (Vite + Nginx)
+│   ├── package.json                            # React dependencies & build scripts
+│   ├── vite.config.js                          # Vite dev server & proxy config
+│   ├── nginx.conf                              # Production Nginx reverse proxy
+│   ├── Dockerfile                              # Multi-stage React + Nginx Dockerfile
+│   ├── index.html                              # React SPA HTML entry point
+│   └── src/
+│       ├── main.jsx                            # React root bootstrap
+│       ├── App.jsx                             # Role-based dashboard router
+│       ├── index.css                           # Modern design system & CSS utility classes
+│       ├── context/
+│       │   └── AuthContext.jsx                 # User state, JWT store, login/logout
+│       ├── services/
+│       │   └── api.js                          # Axios HTTP client & AI endpoints
+│       ├── components/
+│       │   ├── Navbar.jsx                      # Top navigation bar
+│       │   ├── Sidebar.jsx                     # Collapsible side navigation
+│       │   ├── AiAssistantWidget.jsx           # Floating AI chatbot drawer
+│       │   ├── AiStudyPlanModal.jsx            # 7-day Pomodoro AI study schedule
+│       │   └── AiPerformanceExplanationModal.jsx # 3-factor score & 30-day roadmap
+│       └── pages/
+│           ├── LandingPage.jsx                 # Public landing page
+│           ├── LoginPage.jsx                   # Role-based login with 1-click demos
+│           ├── RegisterPage.jsx                # Student registration page
+│           ├── StudentDashboard.jsx            # Full 10-tab Student Portal
+│           ├── FacultyDashboard.jsx            # 8-tab Faculty Command Center
+│           └── AdminDashboard.jsx              # 7-tab Admin Command Center
 └── src/
     └── main/
         ├── java/com/example/campusconnect/
-        │   ├── CampusConnectApplication.java    # Spring Boot entry point
+        │   ├── CampusConnectApplication.java    # Spring Boot application entry point
         │   ├── config/
-        │   │   ├── DataInitializer.java        # Database pre-seeding runner
+        │   │   ├── DataInitializer.java        # Pre-seeding realistic campus database records
         │   │   ├── JwtAuthInterceptor.java     # Route security & token gate
         │   │   ├── JwtTokenProvider.java       # RFC 7519 HMAC-SHA256 JWT utility
-        │   │   ├── PasswordEncoder.java        # NIST PBKDF2 password hasher
+        │   │   ├── PasswordEncoder.java        # Spring Security PBKDF2 password encoder
         │   │   ├── RequireRole.java            # Role authorization annotation
+        │   │   ├── SecurityConfig.java         # Spring Security 6 SecurityFilterChain & CORS
         │   │   └── WebMvcConfig.java           # CORS & interceptor registration
-        │   ├── controller/                     # 15 Spring REST Controllers
+        │   ├── controller/                     # 16 REST API Controllers
         │   │   ├── AdminController.java
         │   │   ├── AchievementController.java
+        │   │   ├── AiController.java           # Spring AI Assistant, Planner, Explanation
         │   │   ├── AssignmentController.java
         │   │   ├── AttendanceController.java
         │   │   ├── AuthController.java
@@ -301,6 +392,9 @@ student-management/
         │   │   ├── StudentController.java
         │   │   └── SubjectController.java
         │   ├── dto/                            # Strongly-typed Data Transfer Objects
+        │   │   ├── AiChatDto.java              # Chat request / message / response
+        │   │   ├── StudyPlanDto.java           # Weekly timetable & priority subjects
+        │   │   ├── PerformanceExplanationDto.java # 3-factor details & 30-day roadmap
         │   │   ├── ApiResponse.java
         │   │   ├── AttendanceSummaryDto.java
         │   │   ├── DashboardStatsDto.java
@@ -311,7 +405,7 @@ student-management/
         │   │   ├── PerformanceAnalysisDto.java
         │   │   ├── RegisterRequest.java
         │   │   └── StudentDto.java
-        │   ├── entity/                         # JPA / Hibernate Entities
+        │   ├── entity/                         # 14 JPA / Hibernate Entities
         │   │   ├── AcademicGoal.java
         │   │   ├── Achievement.java
         │   │   ├── Assignment.java
@@ -336,6 +430,8 @@ student-management/
         │   ├── repository/                     # 11 Spring Data JPA Repositories
         │   └── service/                        # Business Logic & Intelligence Engines
         │       ├── AchievementService.java
+        │       ├── AiService.java              # Spring AI Cognitive Engine Interface
+        │       ├── AiServiceImpl.java          # Heuristic Reasoner & External LLM bridge
         │       ├── AssignmentService.java
         │       ├── AttendanceService.java
         │       ├── AuthService.java
@@ -350,33 +446,35 @@ student-management/
         │       ├── StudentService.java
         │       └── SubjectService.java
         └── resources/
-            ├── application.properties          # Database & JPA configuration
-            └── static/                         # Responsive Web Frontend
+            ├── application.properties          # Development configuration (H2/MySQL)
+            ├── application-prod.properties     # Production tuning, HikariCP, environment variables
+            └── static/                         # Responsive Web Frontend (Vanilla fallback)
                 ├── css/
-                │   ├── style.css               # Core design system, cards, tables, modals
-                │   └── auth.css                # Authentication forms and portal cards
+                │   ├── style.css
+                │   └── auth.css
                 ├── js/
-                │   ├── api.js                  # Fetch client, JWT interceptor, toasts
-                │   ├── chart.min.js            # Offline Chart.js library
-                │   ├── student-dashboard.js    # Student portal controller
-                │   ├── faculty-dashboard.js    # Faculty portal controller
-                │   └── admin-dashboard.js      # Admin command center controller
-                ├── index.html                  # Responsive modern landing page
-                ├── login.html                  # Role-based login with demo fillers
-                ├── register.html               # Student registration portal
-                ├── student-dashboard.html      # 10-tab Student Portal
-                ├── faculty-dashboard.html      # 8-tab Faculty Portal
-                └── admin-dashboard.html        # 7-tab Admin Command Center
+                │   ├── api.js
+                │   ├── chart.min.js
+                │   ├── student-dashboard.js
+                │   ├── faculty-dashboard.js
+                │   └── admin-dashboard.js
+                ├── index.html
+                ├── login.html
+                ├── register.html
+                ├── student-dashboard.html
+                ├── faculty-dashboard.html
+                └── admin-dashboard.html
 ```
 
 ---
 
-## 🔒 Security & Industry Standards
+## 🔒 Security & Standards Compliance
 
-* **Password Protection**: Standards-compliant PBKDF2 with HMAC-SHA256, 12,000 hashing rounds, cryptographically random salt, and timing-attack resistant verification. Passwords are never stored in plain text.
-* **Token Authentication**: Stateless JSON Web Tokens (RFC 7519) carrying encrypted cryptographic claims and expiration metadata, automatically injected via `api.js` request interceptors.
-* **Role-Based Access Control**: Strict multi-level role enforcement via `@RequireRole` annotations and the `JwtAuthInterceptor` protecting administrative and faculty actions.
-* **Injection Prevention**: Hibernate parameterized queries prevent SQL injection across all dynamic search filters.
+* **Spring Security 6 Integration**: Complete `SecurityFilterChain` configuring CORS policy, stateless REST session management, CSRF disabling for token-based APIs, and role-based access gates.
+* **Standards-Compliant Password Hashing**: PBKDF2 with HMAC-SHA256, 12,000 hashing rounds, cryptographically random salt, and timing-attack resistant verification.
+* **Stateless JWT Tokens**: RFC 7519 standard tokens carrying encrypted subject and expiration claims, validated on every API request.
+* **SQL Injection Prevention**: Hibernate parameterized queries prevent SQL injection across all dynamic search filters and sorting queries.
+* **Production Hardening**: Non-root container execution (`appuser`), connection leak detection, and HTTP response compression.
 
 ---
 

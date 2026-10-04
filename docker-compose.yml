@@ -1,0 +1,77 @@
+services:
+  # ============================================================================
+  # MySQL Database Service
+  # ============================================================================
+  mysql:
+    image: mysql:8.0
+    container_name: campusconnect-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: campusconnect_db
+      MYSQL_USER: campususer
+      MYSQL_PASSWORD: campuspass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - campusconnect-network
+
+  # ============================================================================
+  # Spring Boot Backend Service (Java 21 + Spring Security + Spring AI)
+  # ============================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: campusconnect-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: campusconnect_db
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET: CampusConnectProductionSecretKey2026MustBeAtLeast32BytesLongForHmacSha256Security!
+      JWT_EXPIRATION_MS: 86400000
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-gpt-4o-mini}
+    ports:
+      - "8080:8080"
+    networks:
+      - campusconnect-network
+
+  # ============================================================================
+  # React Frontend Service (Vite + Nginx Reverse Proxy)
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: campusconnect-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    networks:
+      - campusconnect-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  campusconnect-network:
+    driver: bridge
