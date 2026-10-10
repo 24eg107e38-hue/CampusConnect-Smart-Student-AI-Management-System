@@ -2,7 +2,8 @@
  * CampusConnect Unified Frontend API Service
  */
 
-const API_BASE = '/api';
+const rawBase = (import.meta.env.VITE_API_BASE_URL || '/api').trim();
+const API_BASE = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
 
 export const Api = {
   getToken() {
@@ -10,7 +11,8 @@ export const Api = {
   },
 
   async request(endpoint, options = {}) {
-    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${cleanEndpoint}`;
     const headers = {
       'Content-Type': 'application/json',
       ...options.headers,
